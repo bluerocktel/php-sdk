@@ -18,11 +18,11 @@ The BlueRockTEL API uses OAuth2 for authentication. However, the package current
 
 ### Client Code Grant
 
-// Soon.
+soon...
 
 ### Password Grant
 
-The SDK allows you to connect using your usual credentials. To get started, first iniate the `BlueRockTELConnector` class : 
+To connect using your usual BlueRockTEL credentials, first initiate the `BlueRockTELConnector` class providing your instance URL, email and password : 
 
 ```php
 use BlueRockTEL\SDK\BlueRockTELConnector;
@@ -34,9 +34,9 @@ $api = new BlueRockTELConnector(
 );
 ```
 
-If the provided credentials are not correct, a `BlueRockTEL\SDK\Exceptions\AuthenticationException` will be thrown.
+If the connector fails to retrive a Bearer token from the provided credentials, a `BlueRockTEL\SDK\Exceptions\AuthenticationException` will be thrown.
 
-You can test the connection by calling the `version` method :
+Otherwise, you can start testing the API by calling the `version()` method of Helper resource :
 
 ```php
 $response = $api->helper()->version();
@@ -49,8 +49,24 @@ var_dump(
 
 ## Usage
 
-You can either call API Endpoint request individually or use Resources.
+To query the API, you can either call each API [Endpoints requests](https://github.com/bluerocktel/php-sdk/tree/main/src/Endpoints) individually, or make use of the provided [Resources](https://github.com/bluerocktel/php-sdk/tree/main/src/Resources) grouping the requests into groups.
 
+
+### Requests
+
+Using request is pretty straightforward. You can use the `call()` method of the `BlueRockTELConnector` class to send the desired request :
+
+```php
+$api = new BlueRockTELConnector(BRT_API_URL, BRT_API_USERNAME, BRT_API_PASSWORD);
+
+$response = $api->call(new GetVersionRequest());
+$response = $api->call(new GetProspectRequest($prospectId));
+```
+
+
+### Resources
+
+Using resources is a more convenient way to query the API. Each resource is a class grouping the requests related to a specific API endpoint.
 
 ```php
 $query = [
@@ -65,13 +81,25 @@ $response = $api->prospect()->index(
     query: $query,
     perPage: 10,
 );
+```
 
+### Response
+
+In both cases, the response is an instance of `BlueRockTEL\SDK\Responses\Response` class. It provides some useful methods to check the response status and get the response data.
+
+```php
 // Check response status...
 $response->ok();
 $response->failed();
 $response->status();
 
-// Get response data as an array...
-$response->json();
-
+// Get response data...
+$response->json(); # as an array
+$response->body(); # as an raw string
 ```
+
+You can learn more reading the [Saloon](https://docs.saloon.dev/the-basics/responses#available-methods) documentation, which this SDK is using underneath.
+
+### Pagination
+
+todo

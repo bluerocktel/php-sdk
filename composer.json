@@ -1,0 +1,20 @@
+{
+    "name": "bluerocktel/php-sdk",
+    "description": "The Official BlueRockTEL API PHP Client/SDK",
+    "autoload": {
+        "psr-4": {
+            "BlueRockTEL\\SDK\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Thomas",
+            "email": "thomas@bluerocktel.com"
+        }
+    ],
+    "require": {
+        "sammyjo20/saloon": "^2.0",
+        "spatie/ray": "^1.37",
+        "illuminate/collections": "^10.17"
+    }
+}

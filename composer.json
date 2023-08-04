@@ -1,6 +1,7 @@
 {
     "name": "bluerocktel/php-sdk",
     "description": "The Official BlueRockTEL API PHP Client/SDK",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "BlueRockTEL\\SDK\\": "src/"
@@ -14,7 +15,9 @@
     ],
     "require": {
         "sammyjo20/saloon": "^2.0",
-        "spatie/ray": "^1.37",
-        "illuminate/collections": "^10.17"
+        "illuminate/collections": "^9||^10"
+    },
+    "require-dev": {
+        "spatie/ray": "^1.37"
     }
 }

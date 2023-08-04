@@ -49,7 +49,7 @@ var_dump(
 
 ## Usage
 
-To query the API, you can either call each API [Endpoints requests](https://github.com/bluerocktel/php-sdk/tree/main/src/Endpoints) individually, or make use of the provided [Resources](https://github.com/bluerocktel/php-sdk/tree/main/src/Resources) grouping the requests into groups.
+To query the API, you can either call each API [Endpoints requests](https://github.com/bluerocktel/php-sdk/tree/main/src/Endpoints) individually, or make use of provided [Resources](https://github.com/bluerocktel/php-sdk/tree/main/src/Resources) which groups the requests into clusters.
 
 
 ### Requests
@@ -57,10 +57,13 @@ To query the API, you can either call each API [Endpoints requests](https://gith
 Using request is pretty straightforward. You can use the `call()` method of the `BlueRockTELConnector` class to send the desired request :
 
 ```php
-$api = new BlueRockTELConnector(BRT_API_URL, BRT_API_USERNAME, BRT_API_PASSWORD);
+use BlueRockTEL\SDK\Endpoints\GetVersionRequest;
+use BlueRockTEL\SDK\Endpoints\Prospects\GetProspectRequest;
+
+$api = new BlueRockTELConnector(BLUEROCKTEL_API_URL, BLUEROCKTEL_API_USERNAME, BLUEROCKTEL_API_PASSWORD);
 
 $response = $api->call(new GetVersionRequest());
-$response = $api->call(new GetProspectRequest($prospectId));
+$response = $api->call(new GetProspectRequest(id: $prospectId));
 ```
 
 

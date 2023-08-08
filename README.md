@@ -1,6 +1,25 @@
 # php-sdk
 
-This library a light PHP wrapper for the [BlueRockTEL](https://bluerocktel.com) Admin API. 
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/bluerocktel/php-sdk.svg?style=flat-square)](https://packagist.org/packages/bluerocktel/php-sdk)
+[![Total Downloads](https://img.shields.io/packagist/dt/bluerocktel/php-sdk.svg?style=flat-square)](https://packagist.org/packages/bluerocktel/php-sdk)
+
+
+This package is a light PHP Wrapper / SDK for the [BlueRockTEL](https://bluerocktel.com) Admin API. 
+
+- [Installation](#installation)
+- [Authentication](#authentication)
+  - [Client Code Grant](#authentication-client-code-grant)
+  - [Password Grant](#authentication-password-grant)
+- [Usage](#usage)
+  - [Requests](#usage-requests)
+  - [Resources](#usage-resources)
+  - [Responses](#usage-responses)
+  - [Entities](#usage-entities)
+  - [Pagination](#usage-pagination)
+
+
+<a name="installation"></a>
 
 ## Installation
 
@@ -12,13 +31,20 @@ You can install the package via composer:
 composer require bluerocktel/php-sdk
 ```
 
+<a name="authentication"></a>
+
 ## Authentication
 
-The BlueRockTEL API uses OAuth2 for authentication. However, the package currently only supports the Password Grant authentication flow.
+BlueRockTEL APIs supports OAuth2 for authentication.  
+However, this package currently only supports the Password Grant authentication flow.  
+
+<a name="authentication-client-code-grant"></a>
 
 ### Client Code Grant
 
-soon...
+Not supported yet.
+
+<a name="authentication-password-grant"></a>
 
 ### Password Grant
 
@@ -47,29 +73,39 @@ var_dump(
 );
 ```
 
+<a name="usage"></a>
+
 ## Usage
 
-To query the API, you can either call each API [Endpoints requests](https://github.com/bluerocktel/php-sdk/tree/main/src/Endpoints) individually, or make use of provided [Resources](https://github.com/bluerocktel/php-sdk/tree/main/src/Resources) which groups the requests into clusters.
+To query the API, you can either call each API [Endpoints requests](https://github.com/bluerocktel/php-sdk/tree/main/src/Endpoints) individually, or make use of provided [Resources classes](https://github.com/bluerocktel/php-sdk/tree/main/src/Resources) which groups the requests into clusters.
 
+
+<a name="usage-requests"></a>
 
 ### Requests
 
-Using request is pretty straightforward. You can use the `call()` method of the `BlueRockTELConnector` class to send the desired request :
+Using single requests is pretty straightforward. You can use the `call()` method of the `BlueRockTELConnector` class to send the desired request to the instance :
 
 ```php
-use BlueRockTEL\SDK\Endpoints\GetVersionRequest;
-use BlueRockTEL\SDK\Endpoints\Prospects\GetProspectRequest;
+use BlueRockTEL\SDK\BlueRockTELConnector;
+use BlueRockTEL\SDK\Endpoints;
 
 $api = new BlueRockTELConnector(BLUEROCKTEL_API_URL, BLUEROCKTEL_API_USERNAME, BLUEROCKTEL_API_PASSWORD);
 
-$response = $api->call(new GetVersionRequest());
-$response = $api->call(new GetProspectRequest(id: $prospectId));
+$response = $api->call(
+  new Endpoints\GetVersionRequest()
+);
+
+$response = $api->call(
+  new Endpoints\Prospects\GetProspectRequest(id: $prospectId)
+);
 ```
 
+<a name="usage-resources"></a>
 
 ### Resources
 
-Using resources is a more convenient way to query the API. Each resource is a class grouping the requests related to a specific API endpoint.
+Using resources is a more convenient way to query the API. Each Resource class groups requests by specific API namespaces (Customer, Prospect...).
 
 ```php
 $query = [
@@ -77,7 +113,7 @@ $query = [
         'name' => 'Acme Enterprise',
         'term_match' => 'PR0001'
     ],
-    'sort' => 'created_at',
+    'sort' => '-created_at',
 ];
 
 $response = $api->prospect()->index(
@@ -87,29 +123,54 @@ $response = $api->prospect()->index(
 );
 ```
 
-Resources usually provide the following methods :
+Resources classes usually provide (but are not limited to) the following methods :
 
 ```php
-public function index(array $query = [], int $perPage = 20, int $page = 1): Response;
-public function show($id): Response;
-public function store(Prospect $prospect): Response;
-public function update(Prospect $prospect): Response;
-public function save(Prospect $prospect): Response;
-public function delete(Prospect $prospect): Response;
+class NamespaceResource
+{
+    public function index(array $query = [], int $perPage = 20, int $page = 1): Response;
+    public function show($id): Response;
+    public function store(Entity $entity): Response;
+    public function update(Entity $entity): Response;
+    public function save(Entity $entity): Response;
+    public function delete(Entity $entity): Response;
+}
 ```
 
-> The save() method is an alias, it will call the update() method if the DTO has an id, and the store() method otherwise.  
+> 👉 The `save()` method is a simple alias : it will call the `update()` method if the given entity has an id, or the `store()` method otherwise.  
 
+Each of those namespace resources can be accessed using the `BlueRockTELConnector` instance :
 
-### Response
+```php
+(new BlueRockTELConnector(...))->prospect(): Resources\ProspectResource
+(new BlueRockTELConnector(...))->note(): Resources\NoteResource
+...
+```
 
-In both cases, the response is an instance of `BlueRockTEL\SDK\Responses\Response` class. It provides some useful methods to check the response status and get the response data.
+If needed, it is also possible to create the desired resource instance manually :
+
+```php
+use BlueRockTEL\SDK\BlueRockTELConnector;
+use BlueRockTEL\SDK\Resources\ProspectResource;
+
+$api = new BlueRockTELConnector(...);
+$resource = new ProspectResource($api);
+$resource->save($prospect);
+```
+
+<a name="usage-responses"></a>
+
+### Responses
+
+Weither you are using Requests or Resources, the response is always an instance of `Saloon\Http\Response` class.  
+It provides some useful methods to check the response status and get the response data.
 
 ```php
 // Check response status
 $response->ok();
 $response->failed();
 $response->status();
+$response->headers();
 
 // Get response data
 $response->json(); # as an array
@@ -117,21 +178,25 @@ $response->body(); # as an raw string
 $response->dtoOrFail(); # as a Data Transfer Object
 ```
 
-You can learn more reading the [Saloon documentation](https://docs.saloon.dev/the-basics/responses#available-methods), which this SDK is using underneath.
+You can learn more by reading the [Saloon documentation](https://docs.saloon.dev/the-basics/responses#available-methods), which this SDK uses underneath.  
 
-### DTO
+<a name="usage-entities"></a>
 
-When working with APIs, sometimes dealing with a raw response or a JSON response can be tedious and unpredictable.
-To make it easier, this SDK provides a way to transform the response data into a Data Transfer Object (DTO).
+### Entities (DTO)
+
+When working with APIs, sometimes dealing with a raw response or a JSON response can be tedious and unpredictable.  
+To make it easier, this SDK provides a way to transform the response data into a Data Transfer Object (DTO), later called "Entities".
 
 ```php
 $response = $api->prospect()->show(id: 92);
 
+// returns: \BlueRockTEL\SDK\Entities\Prospect
 $response->dto();
 $response->dtoOrFail();
 ```
 
-Altrough you can use the `dto()` method to transform the response data into a DTO, it is recommended to use the `dtoOrFail()` method instead. This method will throw an exception if the response status is not 2xx, instead of returning an empty DTO.
+
+Although you can use the `dto()` method to transform the response data into an entity, it is recommended to use the `dtoOrFail()` method instead. This method will throw an exception if the response status is not 2xx, instead of returning an empty DTO.
 
 It is still possible to access the underlying response object using the `getResponse()` method of the DTO :
 
@@ -140,9 +205,9 @@ $entity = $response->dtoOrFail();   // \BlueRockTEL\SDK\Contracts\Entity
 $entity->getResponse();             // \Saloon\Contracts\Response
 ```
 
-Learn more about DTO and their functionnalities on the [Saloon documentation](https://docs.saloon.dev/the-basics/data-transfer-objects).
+Learn more about DTO and their features on the [Saloon documentation](https://docs.saloon.dev/the-basics/data-transfer-objects).
 
-The create/update/delete route will often ask for a DTO as a parameter :
+The create/update/delete routes will often ask for a DTO as a parameter :
 
 ```php
 use BlueRockTEL\SDK\Entities\Prospect;
@@ -157,7 +222,7 @@ $response = $api->prospect()->store(
 
 $prospect = $response->dtoOrFail();
 
-saveProspectId($prospect->id);
+saveProspectId($prospect->id); // save id locally for later use
 
 // update
 $prospect->name = 'Acme Enterprise Inc.';
@@ -170,9 +235,11 @@ $api->prospect()->delete(new Prospect(
 ```
 
 
+<a name="usage-pagination"></a>
+
 ### Pagination
 
-On some index/search routes, the response will provide a Pagination. If you need to iterate on all the results available on the endpoint, you can use the connector's `paginate()` method :
+On some index/search routes, the API response will use a pagination. If you need to iterate on all pages of the endpoint, you can use the handy connector's `paginate()` method :
 
 ```php
 $query = [
@@ -185,20 +252,22 @@ $paginator = $api->paginate(
   perPage: 10,
 );
 
-# Access current page data
-$current = $paginator->current()->json();
-
-# Iterate using lazy loading
-foreach ($paginator->json('data') as $prospects) {
-    foreach($prospects as $prospect) {
+# Iterate on entities (using lazy loading)
+foreach ($paginator as $page) {
+    foreach ($page->dtoOrFail() as $prospect) {
         // ...
     }
 }
 
-// foreach ($paginator->dtoOrFail() as $prospect) // using DTO
+# Iterate on raw arrays (using lazy loading)
+foreach ($paginator->json('data') as $prospects) {
+    foreach ($prospects as $prospect) {
+        // ...
+    }
+}
 ```
 
-Of course, the paginator can be used manually :
+Of course, the paginator can also be controlled manually :
 
 ```php
 while ($paginator->valid()) {
@@ -208,4 +277,4 @@ while ($paginator->valid()) {
 }
 ```
 
-Read more about paginator on the [Saloon documentation](https://docs.saloon.dev/digging-deeper/pagination).
+Read more about pagination on the [Saloon documentation](https://docs.saloon.dev/digging-deeper/pagination).

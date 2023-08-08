@@ -82,27 +82,130 @@ $query = [
 
 $response = $api->prospect()->index(
     query: $query,
-    perPage: 10,
+    perPage: 20,
+    page: 1,
 );
 ```
+
+Resources usually provide the following methods :
+
+```php
+public function index(array $query = [], int $perPage = 20, int $page = 1): Response;
+public function show($id): Response;
+public function store(Prospect $prospect): Response;
+public function update(Prospect $prospect): Response;
+public function save(Prospect $prospect): Response;
+public function delete(Prospect $prospect): Response;
+```
+
+> The save() method is an alias, it will call the update() method if the DTO has an id, and the store() method otherwise.  
+
 
 ### Response
 
 In both cases, the response is an instance of `BlueRockTEL\SDK\Responses\Response` class. It provides some useful methods to check the response status and get the response data.
 
 ```php
-// Check response status...
+// Check response status
 $response->ok();
 $response->failed();
 $response->status();
 
-// Get response data...
+// Get response data
 $response->json(); # as an array
 $response->body(); # as an raw string
+$response->dtoOrFail(); # as a Data Transfer Object
 ```
 
-You can learn more reading the [Saloon](https://docs.saloon.dev/the-basics/responses#available-methods) documentation, which this SDK is using underneath.
+You can learn more reading the [Saloon documentation](https://docs.saloon.dev/the-basics/responses#available-methods), which this SDK is using underneath.
+
+### DTO
+
+When working with APIs, sometimes dealing with a raw response or a JSON response can be tedious and unpredictable.
+To make it easier, this SDK provides a way to transform the response data into a Data Transfer Object (DTO).
+
+```php
+$response = $api->prospect()->show(id: 92);
+
+$response->dto();
+$response->dtoOrFail();
+```
+
+Altrough you can use the `dto()` method to transform the response data into a DTO, it is recommended to use the `dtoOrFail()` method instead. This method will throw an exception if the response status is not 2xx, instead of returning an empty DTO.
+
+It is still possible to access the underlying response object using the `getResponse()` method of the DTO :
+
+```php
+$entity = $response->dtoOrFail();   // \BlueRockTEL\SDK\Contracts\Entity
+$entity->getResponse();             // \Saloon\Contracts\Response
+```
+
+Learn more about DTO and their functionnalities on the [Saloon documentation](https://docs.saloon.dev/the-basics/data-transfer-objects).
+
+The create/update/delete route will often ask for a DTO as a parameter :
+
+```php
+use BlueRockTEL\SDK\Entities\Prospect;
+
+// create
+$response = $api->prospect()->store(
+    new Prospect(
+        name: 'Acme Enterprise',
+        customerAccount: 'PR0001',
+    )
+);
+
+$prospect = $response->dtoOrFail();
+
+saveProspectId($prospect->id);
+
+// update
+$prospect->name = 'Acme Enterprise Inc.';
+$api->prospect()->update($prospect);
+
+// delete
+$api->prospect()->delete(new Prospect(
+    id: 1234,
+));
+```
+
 
 ### Pagination
 
-todo
+On some index/search routes, the response will provide a Pagination. If you need to iterate on all the results available on the endpoint, you can use the connector's `paginate()` method :
+
+```php
+$query = [
+  'sort' => 'created_at',
+];
+
+# Create a PagedPaginator instance
+$paginator = $api->paginate(
+  new GetProspectsRequest($query),
+  perPage: 10,
+);
+
+# Access current page data
+$current = $paginator->current()->json();
+
+# Iterate using lazy loading
+foreach ($paginator->json('data') as $prospects) {
+    foreach($prospects as $prospect) {
+        // ...
+    }
+}
+
+// foreach ($paginator->dtoOrFail() as $prospect) // using DTO
+```
+
+Of course, the paginator can be used manually :
+
+```php
+while ($paginator->valid()) {
+    $data = $paginator->current()->json();
+    // ...
+    $paginator->next();
+}
+```
+
+Read more about paginator on the [Saloon documentation](https://docs.saloon.dev/digging-deeper/pagination).

@@ -68,15 +68,14 @@ class BlueRockTELConnector extends Connector
         ];
     }
 
-    public function paginate(Request $request, mixed ...$additionalArguments): PagedPaginator
+    public function paginate(Request $request, int $perPage = 20, int $page = 1): PagedPaginator
     {
-        $paginator = new PagedPaginator($this, $request, 50, ...$additionalArguments);
+        $paginator = new PagedPaginator($this, $request, $perPage, $page);
 
         $paginator->setLimitKeyName('last_page');
         $paginator->setTotalKeyName('total');
         $paginator->setPageKeyName('page');
         $paginator->setNextPageKeyName('next_page_url');
-        $paginator->setCurrentPage(0);
 
         return $paginator;
     } 
@@ -89,5 +88,10 @@ class BlueRockTELConnector extends Connector
     public function prospect(): Resources\ProspectResource
     {
         return new Resources\ProspectResource($this);
+    }
+
+    public function note(): Resources\NoteResource
+    {
+        return new Resources\NoteResource($this);
     }
 }

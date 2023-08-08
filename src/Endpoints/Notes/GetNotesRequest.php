@@ -1,25 +1,25 @@
 <?php
 
-namespace BlueRockTEL\SDK\Endpoints\Prospects;
+namespace BlueRockTEL\SDK\Endpoints\Notes;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Contracts\Response;
-use BlueRockTEL\SDK\Entities\Prospect;
+use BlueRockTEL\SDK\Entities\Note;
 
-class GetProspectsRequest extends Request
+class GetNotesRequest extends Request
 {
     protected Method $method = Method::GET;
 
     public function resolveEndpoint(): string
     {
-        return '/v1/prospects';
+        return '/v1/notes';
     }
 
     public function __construct(
+        protected string $noteableType,
+        protected int $noteableId,
         protected array $params = [],
-        protected int $perPage = 20,
-        protected int $page = 1,
     ) {
         //
     }
@@ -27,15 +27,15 @@ class GetProspectsRequest extends Request
     protected function defaultQuery(): array
     {
         return array_merge([
-            'page' => $this->page,
-            'per_page' => $this->perPage,
+            'noteable_type' => $this->noteableType,
+            'noteable_id' => $this->noteableId,
         ], $this->params);
     }
 
     public function createDtoFromResponse(Response $response): mixed
     {
-        return $response->collect('data')->map(
-            fn (array $el) => Prospect::fromArray($el)
+        return $response->collect()->map(
+            fn (array $el) => Note::fromArray($el)
         );
     }
 }

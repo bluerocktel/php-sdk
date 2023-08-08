@@ -1,19 +1,19 @@
 <?php
 
-namespace BlueRockTEL\SDK\Endpoints\Prospects;
+namespace BlueRockTEL\SDK\Endpoints\Notes;
 
-use BlueRockTEL\SDK\Entities\Prospect;
+use BlueRockTEL\SDK\Entities\Note;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Contracts\Response;
 
-class GetProspectRequest extends Request
+class GetNoteRequest extends Request
 {
     protected Method $method = Method::GET;
 
     public function resolveEndpoint(): string
     {
-        return '/v1/prospects/' . $this->id;
+        return '/v1/notes/' . $this->id;
     }
 
     public function __construct(
@@ -24,6 +24,6 @@ class GetProspectRequest extends Request
 
     public function createDtoFromResponse(Response $response): mixed
     {
-        return Prospect::fromResponse($response);
+        return Note::fromResponse($response);
     }
 }

@@ -15,7 +15,8 @@
     ],
     "require": {
         "sammyjo20/saloon": "^2.0",
-        "illuminate/collections": "^9||^10"
+        "illuminate/collections": "^9||^10",
+        "nesbot/carbon": "^2.68"
     },
     "require-dev": {
         "spatie/ray": "^1.37"

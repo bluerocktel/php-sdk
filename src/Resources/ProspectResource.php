@@ -3,6 +3,7 @@
 namespace BlueRockTEL\SDK\Resources;
 
 use Saloon\Contracts\Response;
+use BlueRockTEL\SDK\Entities\Prospect;
 use BlueRockTEL\SDK\Endpoints\Prospects as Endpoints;
 
 class ProspectResource extends Resource
@@ -25,6 +26,34 @@ class ProspectResource extends Resource
     {
         return $this->connector->send(
             new Endpoints\GetProspectRequest($id)
+        );
+    }
+
+    public function store(Prospect $prospect): Response
+    {
+        return $this->connector->send(
+            new Endpoints\CreateProspectRequest($prospect)
+        );
+    }
+
+    public function update(Prospect $prospect): Response
+    {
+        return $this->connector->send(
+            new Endpoints\UpdateProspectRequest($prospect)
+        );
+    }
+
+    public function save(Prospect $prospect): Response
+    {
+        return $prospect->id
+            ? $this->update($prospect)
+            : $this->store($prospect);
+    }
+
+    public function delete(Prospect $prospect): Response
+    {
+        return $this->connector->send(
+            new Endpoints\DeleteProspectRequest($prospect)
         );
     }
 }

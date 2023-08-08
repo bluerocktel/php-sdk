@@ -142,8 +142,9 @@ class NamespaceResource
 Each of those namespace resources can be accessed using the `BlueRockTELConnector` instance :
 
 ```php
-(new BlueRockTELConnector(...))->prospect(): Resources\ProspectResource
 (new BlueRockTELConnector(...))->note(): Resources\NoteResource
+(new BlueRockTELConnector(...))->prospect(): Resources\ProspectResource
+(new BlueRockTELConnector(...))->customerFile(): Resources\CustomerFileResource
 ...
 ```
 
@@ -185,6 +186,7 @@ You can learn more by reading the [Saloon documentation](https://docs.saloon.dev
 ### Entities (DTO)
 
 When working with APIs, sometimes dealing with a raw response or a JSON response can be tedious and unpredictable.  
+
 To make it easier, this SDK provides a way to transform the response data into a Data Transfer Object (DTO), later called "Entities".
 
 ```php
@@ -207,7 +209,7 @@ $entity->getResponse();             // \Saloon\Contracts\Response
 
 Learn more about DTO and their features on the [Saloon documentation](https://docs.saloon.dev/the-basics/data-transfer-objects).
 
-The create/update/delete routes will often ask for a DTO as a parameter :
+The create/update/delete routes will often ask for a DTO as first parameter :
 
 ```php
 use BlueRockTEL\SDK\Entities\Prospect;
@@ -221,7 +223,6 @@ $response = $api->prospect()->store(
 );
 
 $prospect = $response->dtoOrFail();
-
 saveProspectId($prospect->id); // save id locally for later use
 
 // update
@@ -271,7 +272,8 @@ Of course, the paginator can also be controlled manually :
 
 ```php
 while ($paginator->valid()) {
-    $data = $paginator->current()->json();
+    $response = $paginator->current();
+    $entities = $response->dtoOrFail();
     // ...
     $paginator->next();
 }

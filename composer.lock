@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f5113115be834ac3462e43e99c2fc37",
+    "content-hash": "9040ce3a71d5ec8b392dae2d5e50c828",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -935,6 +935,60 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "saloonphp/rate-limit-plugin",
+            "version": "v0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saloonphp/rate-limit-plugin.git",
+                "reference": "3641f2a71e85386ecfa95b7effe2a46766d961f6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saloonphp/rate-limit-plugin/zipball/3641f2a71e85386ecfa95b7effe2a46766d961f6",
+                "reference": "3641f2a71e85386ecfa95b7effe2a46766d961f6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "sammyjo20/saloon": "^2.6"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.5",
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^8.5",
+                "pestphp/pest": "^2.6",
+                "phpstan/phpstan": "^1.9",
+                "predis/predis": "^2.1",
+                "psr/simple-cache": "^3.0",
+                "spatie/ray": "^1.33"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Saloon\\RateLimitPlugin\\": "src/",
+                    "Saloon\\RateLimitPlugin\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Carré",
+                    "email": "29132017+Sammyjo20@users.noreply.github.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Handle rate limits beautifully in your Saloon API integrations or SDKs",
+            "homepage": "https://github.com/sammyjo20",
+            "support": {
+                "issues": "https://github.com/saloonphp/rate-limit-plugin/issues",
+                "source": "https://github.com/saloonphp/rate-limit-plugin/tree/v0.1.1"
+            },
+            "time": "2023-05-27T00:24:49+00:00"
         },
         {
             "name": "sammyjo20/saloon",
@@ -2078,7 +2132,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=8.0"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }

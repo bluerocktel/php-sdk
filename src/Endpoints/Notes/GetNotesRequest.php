@@ -6,6 +6,7 @@ use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Contracts\Response;
 use BlueRockTEL\SDK\Entities\Note;
+use BlueRockTEL\SDK\EntityCollection;
 
 class GetNotesRequest extends Request
 {
@@ -32,10 +33,8 @@ class GetNotesRequest extends Request
         ], $this->params);
     }
 
-    public function createDtoFromResponse(Response $response): mixed
+    public function createDtoFromResponse(Response $response): EntityCollection
     {
-        return $response->collect()->map(
-            fn (array $el) => Note::fromArray($el)
-        );
+        return EntityCollection::fromResponse($response, Note::class);
     }
 }

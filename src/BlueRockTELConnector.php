@@ -4,12 +4,18 @@ namespace BlueRockTEL\SDK;
 
 use Saloon\Http\Request;
 use Saloon\Http\Connector;
+use Saloon\RateLimitPlugin\Limit;
 use BlueRockTEL\SDK\Endpoints\AuthRequest;
 use Saloon\Http\Paginators\PagedPaginator;
+use Saloon\RateLimitPlugin\Stores\MemoryStore;
+use Saloon\RateLimitPlugin\Traits\HasRateLimits;
+use Saloon\RateLimitPlugin\Contracts\RateLimitStore;
 use BlueRockTEL\SDK\Exceptions\AuthenticationException;
 
 class BlueRockTELConnector extends Connector
 {
+    use HasRateLimits;
+
     protected string $apiToken;
     protected array $apiUser;
 
@@ -29,13 +35,13 @@ class BlueRockTELConnector extends Connector
             new AuthRequest($this->email, $this->password)
         );
 
-        $body = $response->json();
-
         if ($response->failed()) {
             throw new AuthenticationException(
                 'Failed to authenticate with BlueRockTEL API. Please check your credentials.'
             );
         }
+
+        $body = $response->json();
 
         $this->apiUser = $body['user'];
         $this->apiToken = $body['token'];
@@ -68,6 +74,18 @@ class BlueRockTELConnector extends Connector
         ];
     }
 
+    protected function resolveLimits(): array
+    {
+        return [
+            Limit::allow(requests: 2000, threshold: 0.9)->everyMinute()->sleep(),
+        ];
+    }
+
+    protected function resolveRateLimitStore(): RateLimitStore
+    {
+        return new MemoryStore;
+    }
+
     public function paginate(Request $request, int $perPage = 20, int $page = 1): PagedPaginator
     {
         $paginator = new PagedPaginator($this, $request, $perPage, $page);
@@ -90,8 +108,18 @@ class BlueRockTELConnector extends Connector
         return new Resources\ProspectResource($this);
     }
 
+    public function customer(): Resources\CustomerResource
+    {
+        return new Resources\CustomerResource($this);
+    }
+
     public function note(): Resources\NoteResource
     {
         return new Resources\NoteResource($this);
+    }
+    
+    public function contact(): Resources\ContactResource
+    {
+        return new Resources\ContactResource($this);
     }
 }

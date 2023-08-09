@@ -1,20 +1,20 @@
 <?php
 
-namespace BlueRockTEL\SDK\Endpoints\Prospects;
+namespace BlueRockTEL\SDK\Endpoints\Customers;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Contracts\Response;
 use BlueRockTEL\SDK\EntityCollection;
-use BlueRockTEL\SDK\Entities\Prospect;
+use BlueRockTEL\SDK\Entities\Customer;
 
-class GetProspectsRequest extends Request
+class GetCustomersRequest extends Request
 {
     protected Method $method = Method::GET;
 
     public function resolveEndpoint(): string
     {
-        return '/v1/prospects';
+        return '/v1/customers';
     }
 
     public function __construct(
@@ -35,6 +35,6 @@ class GetProspectsRequest extends Request
 
     public function createDtoFromResponse(Response $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, Prospect::class, 'data');
+        return EntityCollection::fromResponse($response, Customer::class, 'data');
     }
 }

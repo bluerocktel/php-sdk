@@ -17,7 +17,8 @@
         "php": ">=8.0",
         "sammyjo20/saloon": "^2.0",
         "illuminate/collections": "^9||^10",
-        "nesbot/carbon": "^2.68"
+        "nesbot/carbon": "^2.68",
+        "saloonphp/rate-limit-plugin": "^0.1.1"
     },
     "require-dev": {
         "spatie/ray": "^1.37"

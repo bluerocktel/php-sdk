@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "nesbot/carbon": "^2.68",
         "illuminate/collections": ">=9.0",
         "saloonphp/saloon": "^3.0",

@@ -1,21 +1,20 @@
 <?php
 
-namespace BlueRockTEL\SDK\Endpoints\Prospects;
+namespace BlueRockTEL\SDK\Endpoints\PhoneCalls;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
+use BlueRockTEL\SDK\Entities\PhoneCall;
 use BlueRockTEL\SDK\EntityCollection;
-use BlueRockTEL\SDK\Entities\Prospect;
-use Saloon\PaginationPlugin\Contracts\Paginatable;
 
-class GetProspectsRequest extends Request implements Paginatable
+class GetPhoneCallsRequest extends Request
 {
     protected Method $method = Method::GET;
 
     public function resolveEndpoint(): string
     {
-        return '/v1/prospects';
+        return '/v1/notes';
     }
 
     public function __construct(
@@ -37,6 +36,6 @@ class GetProspectsRequest extends Request implements Paginatable
 
     public function createDtoFromResponse(Response $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, Prospect::class, 'data');
+        return EntityCollection::fromResponse($response, PhoneCall::class);
     }
 }

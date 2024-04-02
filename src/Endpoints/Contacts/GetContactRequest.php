@@ -5,7 +5,7 @@ namespace BlueRockTEL\SDK\Endpoints\Contacts;
 use BlueRockTEL\SDK\Entities\Contact;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 
 class GetContactRequest extends Request
 {

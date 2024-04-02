@@ -2,7 +2,7 @@
 
 namespace BlueRockTEL\SDK\Resources;
 
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\Endpoints\GetVersionRequest;
 
 class HelperResource extends Resource

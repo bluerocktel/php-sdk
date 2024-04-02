@@ -5,7 +5,7 @@ namespace BlueRockTEL\SDK\Endpoints\Prospects;
 use BlueRockTEL\SDK\Entities\Prospect;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 
 class GetProspectRequest extends Request
 {

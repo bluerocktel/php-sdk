@@ -2,7 +2,7 @@
 
 namespace BlueRockTEL\SDK\Resources;
 
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\Entities\Note;
 use BlueRockTEL\SDK\Endpoints\Notes as Endpoints;
 
@@ -43,7 +43,7 @@ class NoteResource extends Resource
         );
     }
 
-    public function save(Note $note): Response
+    public function upsert(Note $note): Response
     {
         return $note->id
             ? $this->update($note)
@@ -55,5 +55,13 @@ class NoteResource extends Resource
         return $this->connector->send(
             new Endpoints\DeleteNoteRequest($note)
         );
+    }
+
+    /**
+     * @deprecated Use upsert instead.
+     */
+    public function save(Note $note): Response
+    {
+        return $this->upsert($note);
     }
 }

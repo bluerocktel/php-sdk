@@ -5,7 +5,7 @@ namespace BlueRockTEL\SDK\Endpoints\Contacts;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Illuminate\Support\Arr;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\Entities\Contact;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;

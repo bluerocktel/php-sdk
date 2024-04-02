@@ -2,7 +2,7 @@
 
 namespace BlueRockTEL\SDK\Resources;
 
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\Entities\Prospect;
 use BlueRockTEL\SDK\Endpoints\Prospects as Endpoints;
 
@@ -43,7 +43,7 @@ class ProspectResource extends Resource
         );
     }
 
-    public function save(Prospect $prospect): Response
+    public function upsert(Prospect $prospect): Response
     {
         return $prospect->id
             ? $this->update($prospect)
@@ -55,5 +55,13 @@ class ProspectResource extends Resource
         return $this->connector->send(
             new Endpoints\DeleteProspectRequest($prospect)
         );
+    }
+
+    /**
+     * @deprecated Use upsert instead.
+     */
+    public function save(Prospect $prospect): Response
+    {
+        return $this->upsert($prospect);
     }
 }

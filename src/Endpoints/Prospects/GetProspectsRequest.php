@@ -4,11 +4,12 @@ namespace BlueRockTEL\SDK\Endpoints\Prospects;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\EntityCollection;
 use BlueRockTEL\SDK\Entities\Prospect;
+use Saloon\PaginationPlugin\Contracts\Paginatable;
 
-class GetProspectsRequest extends Request
+class GetProspectsRequest extends Request implements Paginatable
 {
     protected Method $method = Method::GET;
 

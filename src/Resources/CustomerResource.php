@@ -2,7 +2,7 @@
 
 namespace BlueRockTEL\SDK\Resources;
 
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\Entities\Customer;
 use BlueRockTEL\SDK\Endpoints\Customers as Endpoints;
 
@@ -43,7 +43,7 @@ class CustomerResource extends Resource
         );
     }
 
-    public function save(Customer $customer): Response
+    public function upsert(Customer $customer): Response
     {
         return $customer->id
             ? $this->update($customer)
@@ -55,5 +55,13 @@ class CustomerResource extends Resource
         return $this->connector->send(
             new Endpoints\DeleteCustomerRequest($customer)
         );
+    }
+
+    /**
+     * @deprecated Use upsert instead.
+     */
+    public function save(Customer $customer): Response
+    {
+        return $this->upsert($customer);
     }
 }

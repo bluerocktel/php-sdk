@@ -15,10 +15,11 @@
     ],
     "require": {
         "php": ">=8.0",
-        "sammyjo20/saloon": "^2.0",
-        "illuminate/collections": "^9||^10",
         "nesbot/carbon": "^2.68",
-        "saloonphp/rate-limit-plugin": "^0.1.1"
+        "illuminate/collections": ">=9.0",
+        "saloonphp/saloon": "^3.0",
+        "saloonphp/rate-limit-plugin": "^2.0",
+        "saloonphp/pagination-plugin": "^2.0"
     },
     "require-dev": {
         "spatie/ray": "^1.37"

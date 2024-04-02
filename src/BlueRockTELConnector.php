@@ -4,15 +4,18 @@ namespace BlueRockTEL\SDK;
 
 use Saloon\Http\Request;
 use Saloon\Http\Connector;
+use Saloon\Http\Response;
 use Saloon\RateLimitPlugin\Limit;
 use BlueRockTEL\SDK\Endpoints\AuthRequest;
-use Saloon\Http\Paginators\PagedPaginator;
 use Saloon\RateLimitPlugin\Stores\MemoryStore;
 use Saloon\RateLimitPlugin\Traits\HasRateLimits;
 use Saloon\RateLimitPlugin\Contracts\RateLimitStore;
 use BlueRockTEL\SDK\Exceptions\AuthenticationException;
+use Saloon\Http\Auth\TokenAuthenticator;
+use Saloon\PaginationPlugin\PagedPaginator;
+use Saloon\PaginationPlugin\Contracts\HasPagination;
 
-class BlueRockTELConnector extends Connector
+class BlueRockTELConnector extends Connector implements HasPagination
 {
     use HasRateLimits;
 
@@ -46,7 +49,7 @@ class BlueRockTELConnector extends Connector
         $this->apiUser = $body['user'];
         $this->apiToken = $body['token'];
 
-        $this->withTokenAuth($this->apiToken); 
+        $this->authenticate(new TokenAuthenticator($this->apiToken));
     }
 
     public function resolveBaseUrl(): string
@@ -86,17 +89,24 @@ class BlueRockTELConnector extends Connector
         return new MemoryStore;
     }
 
-    public function paginate(Request $request, int $perPage = 20, int $page = 1): PagedPaginator
+    public function paginate(Request $request): PagedPaginator
     {
-        $paginator = new PagedPaginator($this, $request, $perPage, $page);
+        return new class(connector: $this, request: $request) extends PagedPaginator
+        {
+            protected ?int $perPageLimit = 20;
 
-        $paginator->setLimitKeyName('last_page');
-        $paginator->setTotalKeyName('total');
-        $paginator->setPageKeyName('page');
-        $paginator->setNextPageKeyName('next_page_url');
+            protected function isLastPage(Response $response): bool
+            {
+                return $response->json('last_page')
+                    && $response->json('last_page') === $response->json('current_page');
+            }
 
-        return $paginator;
-    } 
+            protected function getPageItems(Response $response, Request $request): array
+            {
+                return $request->createDtoFromResponse($response->json('data'));
+            }
+        };
+    }
 
     public function helper(): Resources\HelperResource
     {
@@ -117,7 +127,7 @@ class BlueRockTELConnector extends Connector
     {
         return new Resources\NoteResource($this);
     }
-    
+
     public function contact(): Resources\ContactResource
     {
         return new Resources\ContactResource($this);

@@ -4,7 +4,7 @@ namespace BlueRockTEL\SDK\Endpoints\Contacts;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use BlueRockTEL\SDK\Entities\Contact;
 use BlueRockTEL\SDK\EntityCollection;
 

@@ -5,7 +5,7 @@ namespace BlueRockTEL\SDK\Endpoints\Notes;
 use BlueRockTEL\SDK\Entities\Note;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 
 class GetNoteRequest extends Request
 {

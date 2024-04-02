@@ -5,7 +5,7 @@ namespace BlueRockTEL\SDK\Endpoints\Customers;
 use BlueRockTEL\SDK\Entities\Customer;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 
 class GetCustomerRequest extends Request
 {

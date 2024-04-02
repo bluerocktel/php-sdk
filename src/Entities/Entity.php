@@ -2,7 +2,7 @@
 
 namespace BlueRockTEL\SDK\Entities;
 
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 use Saloon\Traits\Responses\HasResponse;
 use Saloon\Contracts\DataObjects\WithResponse;
 use BlueRockTEL\SDK\Entities\Concerns\CastArrayValues;

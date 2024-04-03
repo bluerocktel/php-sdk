@@ -132,4 +132,9 @@ class BlueRockTELConnector extends Connector implements HasPagination
     {
         return new Resources\ContactResource($this);
     }
+
+    public function phoneCall(): Resources\PhoneCallResource
+    {
+        return new Resources\PhoneCallResource($this);
+    }
 }

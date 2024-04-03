@@ -22,7 +22,7 @@ class ContactResource extends Resource
         );
     }
 
-    public function show($id): Response
+    public function show(int $id): Response
     {
         return $this->connector->send(
             new Endpoints\GetContactRequest($id)
@@ -50,10 +50,10 @@ class ContactResource extends Resource
             : $this->store($contact);
     }
 
-    public function delete(Contact $contact): Response
+    public function delete(int $id): Response
     {
         return $this->connector->send(
-            new Endpoints\DeleteContactRequest($contact)
+            new Endpoints\DeleteContactRequest($id)
         );
     }
 

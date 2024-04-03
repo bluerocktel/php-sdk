@@ -22,7 +22,7 @@ class NoteResource extends Resource
         );
     }
 
-    public function show($id): Response
+    public function show(int $id): Response
     {
         return $this->connector->send(
             new Endpoints\GetNoteRequest($id)
@@ -50,10 +50,10 @@ class NoteResource extends Resource
             : $this->store($note);
     }
 
-    public function delete(Note $note): Response
+    public function delete(int $id): Response
     {
         return $this->connector->send(
-            new Endpoints\DeleteNoteRequest($note)
+            new Endpoints\DeleteNoteRequest($id)
         );
     }
 

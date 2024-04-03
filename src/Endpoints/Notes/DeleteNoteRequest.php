@@ -4,10 +4,8 @@ namespace BlueRockTEL\SDK\Endpoints\Notes;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use BlueRockTEL\SDK\Entities\Note;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
-use BlueRockTEL\SDK\Exceptions\EntityIdMissingException;
 
 class DeleteNoteRequest extends Request implements HasBody
 {
@@ -17,14 +15,12 @@ class DeleteNoteRequest extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/v1/notes/' . $this->note->id;
+        return '/v1/notes/' . $this->id;
     }
 
     public function __construct(
-        protected Note $note,
+        protected int $id,
     ) {
-        if (!$this->note->id) {
-            throw new EntityIdMissingException('Entity must have an ID to be updated.');
-        }
+        //
     }
 }

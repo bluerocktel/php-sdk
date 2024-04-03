@@ -17,13 +17,14 @@ This package is a light PHP Wrapper / SDK for the [BlueRockTEL](https://bluerock
   - [Responses](#usage-responses)
   - [Entities](#usage-entities)
   - [Pagination](#usage-pagination)
+  - [Extending the SDK](#usage-extends)
 
 
 <a name="installation"></a>
 
 ## Installation
 
-This library requires PHP `^8.0`.
+This library requires PHP `>=8.1`.
 
 You can install the package via composer:
 
@@ -54,7 +55,7 @@ To connect using your usual BlueRockTEL credentials, first initiate the `BlueRoc
 use BlueRockTEL\SDK\BlueRockTELConnector;
 
 $api = new BlueRockTELConnector(
-  'https://telecom0xxx-admin.bluerocktel.net/api/',
+  'https://telecomxxxx-admin.bluerocktel.net/api/',
   'developers@bluerocktel.com',
   'secret',
 );
@@ -82,7 +83,7 @@ To query the API, you can either call each API [Endpoints requests](https://gith
 
 <a name="usage-requests"></a>
 
-### Requests
+### Using Requests
 
 Using single requests is pretty straightforward. You can use the `call()` method of the `BlueRockTELConnector` class to send the desired request to the instance :
 
@@ -103,11 +104,15 @@ $response = $api->call(
 
 <a name="usage-resources"></a>
 
-### Resources
+### Using Resources
 
 Using resources is a more convenient way to query the API. Each Resource class groups requests by specific API namespaces (Customer, Prospect...).
 
 ```php
+use BlueRockTEL\SDK\BlueRockTELConnector;
+
+$api = new BlueRockTELConnector(BLUEROCKTEL_API_URL, BLUEROCKTEL_API_USERNAME, BLUEROCKTEL_API_PASSWORD);
+
 $query = [
     'filter' => [
         'name' => 'Acme Enterprise',
@@ -128,12 +133,12 @@ Resources classes usually provide (but are not limited to) the following methods
 ```php
 class NamespaceResource
 {
-    public function index(array $query = [], int $perPage = 20, int $page = 1): Response;
-    public function show($id): Response;
+    public function index(array $params = [], int $perPage = 20, int $page = 1): Response;
+    public function show(int $id): Response;
     public function store(Entity $entity): Response;
     public function update(Entity $entity): Response;
     public function upsert(Entity $entity): Response;
-    public function delete(Entity $entity): Response;
+    public function delete(int $id): Response;
 }
 ```
 
@@ -150,15 +155,16 @@ $connector->customerFile(): Resources\CustomerFileResource
 ...
 ```
 
-If needed, it is also possible to create the desired resource instance manually :
+If needed, it is also possible to create the desired resource instance manually.
 
 ```php
 use BlueRockTEL\SDK\BlueRockTELConnector;
 use BlueRockTEL\SDK\Resources\ProspectResource;
 
-$api = new BlueRockTELConnector(...);
-
+$api = new BlueRockTELConnector();
 $resource = new ProspectResource($api);
+
+$prospect = $resource->show($prospectId);
 $resource->upsert($prospect);
 ```
 
@@ -182,22 +188,22 @@ $response->body(); # as an raw string
 $response->dtoOrFail(); # as a Data Transfer Object
 ```
 
-You can learn more by reading the [Saloon documentation](https://docs.saloon.dev/the-basics/responses#useful-methods), which this SDK uses underneath.
+You can learn more about responses by reading the [Saloon documentation](https://docs.saloon.dev/the-basics/responses#useful-methods), which this SDK uses underneath.
 
 <a name="usage-entities"></a>
 
 ### Entities (DTO)
 
-When working with APIs, sometimes dealing with a raw response or a JSON response can be tedious and unpredictable.
+When working with APIs, dealing with a raw or JSON response can be tedious and unpredictable.
 
-To make it easier, this SDK provides a way to transform the response data into a Data Transfer Object (DTO), later called "Entities".
+To make it easier, this SDK provides a way to transform the response data into a Data Transfer Object (DTO) (later called Entities). This way, you are aware of the structure of the data you are working with, and you can access the data using object typed properties instead of untyped array keys.
+
 
 ```php
 $response = $api->prospect()->show(id: 92);
 
-// returns: \BlueRockTEL\SDK\Entities\Prospect
-$response->dto();
-$response->dtoOrFail();
+/** @var \BlueRockTEL\SDK\Entities\Prospect */
+$prospect = $response->dtoOrFail();
 ```
 
 
@@ -207,35 +213,29 @@ It is still possible to access the underlying response object using the `getResp
 
 ```php
 $entity = $response->dtoOrFail();   // \BlueRockTEL\SDK\Contracts\Entity
-$entity->getResponse();             // \Saloon\Contracts\Response
+$entity->getResponse();             // \Saloon\Http\Response
 ```
 
-Learn more about DTO and their features on the [Saloon documentation](https://docs.saloon.dev/digging-deeper/data-transfer-objects).
+> Learn more about working with Data tranfert objects on the [Saloon documentation](https://docs.saloon.dev/digging-deeper/data-transfer-objects).
 
-The create/update/delete routes will often ask for a DTO as first parameter :
+The create/update/upsert routes will often ask for a DTO as first parameter :
 
 ```php
 use BlueRockTEL\SDK\Entities\Prospect;
 
 // create
 $response = $api->prospect()->store(
-    new Prospect(
+    prospect: new Prospect(
         name: 'Acme Enterprise',
         customerAccount: 'PR0001',
-    )
+    ),
 );
 
 $prospect = $response->dtoOrFail();
-saveProspectId($prospect->id); // save id locally for later use
 
 // update
 $prospect->name = 'Acme Enterprise Inc.';
 $api->prospect()->update($prospect);
-
-// delete
-$api->prospect()->delete(new Prospect(
-    id: 1234,
-));
 ```
 
 
@@ -254,11 +254,41 @@ $query = [
 # Create a PagedPaginator instance
 $paginator = $api->paginate(new GetProspectsRequest($query));
 
-# Iterate on entities (using lazy loading)
+# Iterate on all pages entities, using lazy loading for performance
 foreach ($paginator->items() as $prospect) {
     $name = $prospect->name;
     $customerAccount = $prospect->customerAccount;
 }
 ```
 
-Read more about pagination on the [Saloon documentation](https://docs.saloon.dev/installable-plugins/pagination#using-the-paginator).
+Read more about lazy paginations on the [Saloon documentation](https://docs.saloon.dev/installable-plugins/pagination#using-the-paginator).
+
+<a name="usage-extends"></a>
+
+### Extending the SDK
+
+You may easily extend the SDK by creating your own Resources, Requests, and Entities.
+
+Then, by extending the `BlueRockTELConnector` class, add you new resources to the connector :
+
+```php
+use BlueRockTEL\SDK\BlueRockTELConnector;
+
+class MyCustomConnector extends BlueRockTELConnector
+{
+    public function defaultConfig(): array
+    {
+        return [
+            'timeout' => 120,
+        ];
+    }
+
+    public function customResource(): \App\Resources\CustomResource
+    {
+        return new \App\Resources\CustomResource($this);
+    }
+}
+
+$api = new MyCustomConnector(BLUEROCKTEL_API_URL, BLUEROCKTEL_API_USERNAME, BLUEROCKTEL_API_PASSWORD);
+$api->customResource()->index();
+```

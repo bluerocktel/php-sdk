@@ -22,7 +22,7 @@ class ProspectResource extends Resource
         );
     }
 
-    public function show($id): Response
+    public function show(int $id): Response
     {
         return $this->connector->send(
             new Endpoints\GetProspectRequest($id)
@@ -50,10 +50,10 @@ class ProspectResource extends Resource
             : $this->store($prospect);
     }
 
-    public function delete(Prospect $prospect): Response
+    public function delete(int $id): Response
     {
         return $this->connector->send(
-            new Endpoints\DeleteProspectRequest($prospect)
+            new Endpoints\DeleteProspectRequest($id)
         );
     }
 

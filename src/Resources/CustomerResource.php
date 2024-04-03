@@ -22,7 +22,7 @@ class CustomerResource extends Resource
         );
     }
 
-    public function show($id): Response
+    public function show(int $id): Response
     {
         return $this->connector->send(
             new Endpoints\GetCustomerRequest($id)
@@ -50,10 +50,10 @@ class CustomerResource extends Resource
             : $this->store($customer);
     }
 
-    public function delete(Customer $customer): Response
+    public function delete(int $id): Response
     {
         return $this->connector->send(
-            new Endpoints\DeleteCustomerRequest($customer)
+            new Endpoints\DeleteCustomerRequest($id)
         );
     }
 

@@ -8,18 +8,17 @@ use Saloon\Http\Response;
 use BlueRockTEL\SDK\Entities\Contact;
 use BlueRockTEL\SDK\EntityCollection;
 
-class GetContactsRequest extends Request
+class ShowContactByNumberRequest extends Request
 {
     protected Method $method = Method::GET;
 
     public function resolveEndpoint(): string
     {
-        return '/v1/contacts';
+        return '/v1/contacts/numbers';
     }
 
     public function __construct(
-        protected string $contactableType,
-        protected int $contactableId,
+        protected string $phoneNumber,
         protected array $params = [],
     ) {
         //
@@ -28,14 +27,13 @@ class GetContactsRequest extends Request
     protected function defaultQuery(): array
     {
         return [
-            'contactable_type' => $this->contactableType,
-            'contactable_id' => $this->contactableId,
+            'phoneNumber' => $this->phoneNumber,
             ...$this->params,
         ];
     }
 
-    public function createDtoFromResponse(Response $response): EntityCollection
+    public function createDtoFromResponse(Response $response): Contact
     {
-        return EntityCollection::fromResponse($response, Contact::class);
+        return Contact::fromResponse($response, 'data');
     }
 }

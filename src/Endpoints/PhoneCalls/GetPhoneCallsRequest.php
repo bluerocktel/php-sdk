@@ -14,7 +14,7 @@ class GetPhoneCallsRequest extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/v1/notes';
+        return '/v1/phone-calls';
     }
 
     public function __construct(

@@ -16,10 +16,10 @@ abstract class Entity implements EntityContract, WithResponse
     use CreatesFromArray;
     use CastArrayValues;
 
-    public static function fromResponse(Response $response): static
+    public static function fromResponse(Response $response, null|string|int $path = null): static
     {
         return static::fromArray(
-            (array) $response->json()
+            (array) $response->json($path)
         );
     }
 

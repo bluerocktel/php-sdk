@@ -28,10 +28,11 @@ class GetCustomersRequest extends Request implements Paginatable
 
     protected function defaultQuery(): array
     {
-        return array_merge([
+        return [
             'page' => $this->page,
             'per_page' => $this->perPage,
-        ], $this->params);
+            ...$this->params,
+        ];
     }
 
     public function createDtoFromResponse(Response $response): EntityCollection

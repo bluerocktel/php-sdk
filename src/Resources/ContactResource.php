@@ -57,6 +57,18 @@ class ContactResource extends Resource
         );
     }
 
+    public function showByNumber(
+        string $phoneNumber,
+        array $params = [],
+    ): Response {
+        return $this->connector->send(
+            new Endpoints\ShowContactByNumberRequest(
+                phoneNumber: $phoneNumber,
+                params: $params,
+            )
+        );
+    }
+
     /**
      * @deprecated Use upsert instead.
      */

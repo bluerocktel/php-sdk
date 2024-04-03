@@ -30,10 +30,11 @@ class CreateContactRequest extends Request implements HasBody
 
     protected function defaultQuery(): array
     {
-        return array_merge([
+        return [
             'contactable_id' => $this->contact->contactable_id,
             'contactable_type' => $this->contact->contactable_type,
-        ], $this->params);
+            ...$this->params,
+        ];
     }
 
     protected function defaultBody(): array

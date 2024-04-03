@@ -27,10 +27,11 @@ class GetNotesRequest extends Request
 
     protected function defaultQuery(): array
     {
-        return array_merge([
+        return [
             'noteable_type' => $this->noteableType,
             'noteable_id' => $this->noteableId,
-        ], $this->params);
+            ...$this->params,
+        ];
     }
 
     public function createDtoFromResponse(Response $response): EntityCollection

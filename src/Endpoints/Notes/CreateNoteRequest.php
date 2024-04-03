@@ -30,10 +30,11 @@ class CreateNoteRequest extends Request implements HasBody
 
     protected function defaultQuery(): array
     {
-        return array_merge([
+        return [
             'noteable_id' => $this->note->noteable_id,
             'noteable_type' => $this->note->noteable_type,
-        ], $this->params);
+            ...$this->params,
+        ];
     }
 
     protected function defaultBody(): array

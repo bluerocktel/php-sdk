@@ -113,9 +113,9 @@ class BlueRockTELConnector extends Connector implements HasPagination
         return new Resources\HelperResource($this);
     }
 
-    public function prospect(): Resources\ProspectResource
+    public function user(): Resources\UserResource
     {
-        return new Resources\ProspectResource($this);
+        return new Resources\UserResource($this);
     }
 
     public function customer(): Resources\CustomerResource
@@ -123,14 +123,19 @@ class BlueRockTELConnector extends Connector implements HasPagination
         return new Resources\CustomerResource($this);
     }
 
-    public function note(): Resources\NoteResource
+    public function prospect(): Resources\ProspectResource
     {
-        return new Resources\NoteResource($this);
+        return new Resources\ProspectResource($this);
     }
 
     public function contact(): Resources\ContactResource
     {
         return new Resources\ContactResource($this);
+    }
+
+    public function note(): Resources\NoteResource
+    {
+        return new Resources\NoteResource($this);
     }
 
     public function phoneCall(): Resources\PhoneCallResource

@@ -36,4 +36,11 @@ class ShowContactByNumberRequest extends Request
     {
         return Contact::fromResponse($response, 'data');
     }
+
+    public function hasRequestFailed(Response $response): ?bool
+    {
+        $textualResponse = $response->json('response');
+
+        return $textualResponse && str_contains($textualResponse, 'not found');
+    }
 }

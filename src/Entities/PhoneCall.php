@@ -7,6 +7,14 @@ use BlueRockTEL\SDK\Entities\Entity;
 
 class PhoneCall extends Entity
 {
+    protected static $arrayCast = [
+        'answered' => 'boolean',
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function __construct(
         readonly public ?int $id = null,
         readonly public ?int $user_id = null,

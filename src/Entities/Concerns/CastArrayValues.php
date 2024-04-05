@@ -31,9 +31,9 @@ trait CastArrayValues
 
             $values[$key] = match ($cast[$key]) {
                 'null' => null,
-                'int' => (int) $value,
+                'int', 'integer' => (int) $value,
                 'float' => (float) $value,
-                'bool' => (bool) $value,
+                'bool', 'boolean' => (bool) $value,
                 'string' => (string) $value,
                 'array' => (array) $value,
                 'object' => (object) $value,

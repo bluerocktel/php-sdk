@@ -36,6 +36,6 @@ class GetPhoneCallsRequest extends Request
 
     public function createDtoFromResponse(Response $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, PhoneCall::class);
+        return EntityCollection::fromResponse($response, PhoneCall::class, 'data');
     }
 }

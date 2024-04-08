@@ -32,6 +32,6 @@ class GetUsersRequest extends Request
 
     public function createDtoFromResponse(Response $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, User::class);
+        return EntityCollection::fromResponse($response, User::class, 'data');
     }
 }

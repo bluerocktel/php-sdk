@@ -29,6 +29,13 @@ class PhoneCall extends Entity
         readonly public ?string $recording_file = null,
         readonly public ?Carbon $started_at = null,
         readonly public ?Carbon $ended_at = null,
+        readonly public ?string $transcription = null,
+        readonly public ?string $transcription_diarized = null,
+        readonly public ?string $summary = null,
+        readonly public ?string $summary_detailed = null,
+        readonly public ?array $sentiments = null,
+        readonly public ?array $topics = null,
+        readonly public ?array $segments = null,
         readonly public ?Carbon $created_at = null,
         readonly public ?Carbon $updated_at = null,
     ) {

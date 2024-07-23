@@ -19,6 +19,7 @@ class PhoneCall extends Entity
         readonly public ?int $id = null,
         readonly public ?int $user_id = null,
         readonly public ?int $contact_id = null,
+        readonly public ?int $ticket_id = null,
         readonly public ?string $direction = null,
         readonly public ?string $status = null,
         readonly public bool $answered = true,

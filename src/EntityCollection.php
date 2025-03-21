@@ -15,4 +15,12 @@ class EntityCollection extends Collection
 
         return new static($elements);
     }
+
+    public static function fromArray(array $response, string $dtoClass): static
+    {
+        $elements = collect($response)
+            ->map(fn (array $el) => $dtoClass::fromArray($el));
+
+        return new static($elements);
+    }
 }

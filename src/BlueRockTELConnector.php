@@ -91,8 +91,7 @@ class BlueRockTELConnector extends Connector implements HasPagination
 
     public function paginate(Request $request): PagedPaginator
     {
-        return new class(connector: $this, request: $request) extends PagedPaginator
-        {
+        return new class(connector: $this, request: $request) extends PagedPaginator {
             protected ?int $perPageLimit = 20;
 
             protected function isLastPage(Response $response): bool
@@ -103,7 +102,7 @@ class BlueRockTELConnector extends Connector implements HasPagination
 
             protected function getPageItems(Response $response, Request $request): array
             {
-                return $request->createDtoFromResponse($response->json('data'));
+                return $request->createDtoFromResponse($response->json('data'))->all();
             }
         };
     }

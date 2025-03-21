@@ -35,8 +35,10 @@ class GetCustomersRequest extends Request implements Paginatable
         ];
     }
 
-    public function createDtoFromResponse(Response $response): EntityCollection
+    public function createDtoFromResponse(Response | array $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, Customer::class, 'data');
+        return is_array($response)
+            ? EntityCollection::fromArray($response, Customer::class)
+            : EntityCollection::fromResponse($response, Customer::class, 'data');
     }
 }

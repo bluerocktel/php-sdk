@@ -34,8 +34,10 @@ class GetNotesRequest extends Request
         ];
     }
 
-    public function createDtoFromResponse(Response $response): EntityCollection
+    public function createDtoFromResponse(Response | array $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, Note::class);
+        return is_array($response)
+            ? EntityCollection::fromArray($response, Note::class)
+            : EntityCollection::fromResponse($response, Note::class);
     }
 }

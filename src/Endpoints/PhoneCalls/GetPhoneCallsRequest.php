@@ -34,8 +34,10 @@ class GetPhoneCallsRequest extends Request
         ];
     }
 
-    public function createDtoFromResponse(Response $response): EntityCollection
+    public function createDtoFromResponse(Response | array $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, PhoneCall::class, 'data');
+        return is_array($response)
+            ? EntityCollection::fromArray($response, PhoneCall::class)
+            : EntityCollection::fromResponse($response, PhoneCall::class, 'data');
     }
 }

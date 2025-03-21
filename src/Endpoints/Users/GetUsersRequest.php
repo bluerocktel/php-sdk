@@ -30,8 +30,10 @@ class GetUsersRequest extends Request
         ];
     }
 
-    public function createDtoFromResponse(Response $response): EntityCollection
+    public function createDtoFromResponse(Response | array $response): EntityCollection
     {
-        return EntityCollection::fromResponse($response, User::class, 'data');
+        return is_array($response)
+            ? EntityCollection::fromArray($response, User::class)
+            : EntityCollection::fromResponse($response, User::class, 'data');
     }
 }

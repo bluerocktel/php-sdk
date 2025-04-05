@@ -3,17 +3,18 @@
 namespace BlueRockTEL\SDK;
 
 use Saloon\Http\Request;
-use Saloon\Http\Connector;
 use Saloon\Http\Response;
+use Saloon\Http\Connector;
+use Saloon\Http\PendingRequest;
 use Saloon\RateLimitPlugin\Limit;
+use Saloon\Http\Auth\TokenAuthenticator;
 use BlueRockTEL\SDK\Endpoints\AuthRequest;
+use Saloon\PaginationPlugin\PagedPaginator;
 use Saloon\RateLimitPlugin\Stores\MemoryStore;
 use Saloon\RateLimitPlugin\Traits\HasRateLimits;
+use Saloon\PaginationPlugin\Contracts\HasPagination;
 use Saloon\RateLimitPlugin\Contracts\RateLimitStore;
 use BlueRockTEL\SDK\Exceptions\AuthenticationException;
-use Saloon\Http\Auth\TokenAuthenticator;
-use Saloon\PaginationPlugin\PagedPaginator;
-use Saloon\PaginationPlugin\Contracts\HasPagination;
 
 class BlueRockTELConnector extends Connector implements HasPagination
 {
@@ -29,10 +30,14 @@ class BlueRockTELConnector extends Connector implements HasPagination
         #[\SensitiveParameter]
         protected string $password,
     ) {
-        $this->setAccessToken();
     }
 
-    protected function setAccessToken()
+    public function boot(PendingRequest $pendingRequest): void
+    {
+        $this->authenticatePendingRequest($pendingRequest);
+    }
+
+    protected function setAccessToken(): void
     {
         $response = $this->send(
             new AuthRequest($this->email, $this->password)
@@ -48,8 +53,23 @@ class BlueRockTELConnector extends Connector implements HasPagination
 
         $this->apiUser = $body['user'];
         $this->apiToken = $body['token'];
+    }
 
-        $this->authenticate(new TokenAuthenticator($this->apiToken));
+    protected function authenticatePendingRequest(PendingRequest $pendingRequest): void
+    {
+        if (get_class($pendingRequest->getRequest()) === AuthRequest::class) {
+            return;
+        }
+
+        if ($pendingRequest->hasMockClient()) {
+            return;
+        }
+
+        if (!isset($this->apiToken)) {
+            $this->setAccessToken();
+        }
+
+        $pendingRequest->authenticate(new TokenAuthenticator($this->apiToken));
     }
 
     public function resolveBaseUrl(): string

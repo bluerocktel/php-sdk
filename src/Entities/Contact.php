@@ -16,6 +16,7 @@ class Contact extends Entity
         readonly public ?string $firstName = null,
         readonly public ?string $lastName = null,
         readonly public ?string $emailAddress = null,
+        readonly public ?string $company = null,
         readonly public ?string $mobilePhone = null,
         readonly public ?string $landlinePhone = null,
         readonly public ?string $role = null,

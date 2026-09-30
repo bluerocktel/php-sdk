@@ -116,8 +116,15 @@ class BlueRockTELConnector extends Connector implements HasPagination
 
             protected function isLastPage(Response $response): bool
             {
-                return $response->json('last_page')
-                    && $response->json('last_page') === $response->json('current_page');
+                if (empty($response->json('data'))) {
+                    return true;
+                }
+
+                // Laravel API resources nest pagination under `meta`; plain paginators keep it at the root.
+                $currentPage = $response->json('meta.current_page') ?? $response->json('current_page');
+                $lastPage = $response->json('meta.last_page') ?? $response->json('last_page');
+
+                return (int) $currentPage >= (int) $lastPage;
             }
 
             protected function getPageItems(Response $response, Request $request): array

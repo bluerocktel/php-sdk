@@ -9,21 +9,49 @@ trait CreatesFromArray
 {
     public static function createFromArray(array $data): static
     {
-        $arguments = new Collection();
-        $className = static::class;
+        $data = static::mapKeysToParameters($data);
 
-        $reflector = new ReflectionClass($className);
-        $constructor = $reflector->getConstructor();
+        return new (static::class)(
+            ...array_intersect_key($data, array_flip(static::getParameterNames()))
+        );
+    }
 
-        if ($constructor) {
-            $parameters = $constructor->getParameters();
-            foreach ($parameters as $parameter) {
-                $arguments->push($parameter->getName());
+    /**
+     * Rename the given keys to the matching constructor parameter names, ignoring case and
+     * underscores, so both `mainAddressLine1` and `main_address_line1` fill `$mainAddressLine1`.
+     */
+    public static function mapKeysToParameters(array $data): array
+    {
+        $parameters = (new Collection(static::getParameterNames()))
+            ->keyBy(fn (string $name) => static::normalizeKey($name));
+
+        $mapped = [];
+
+        foreach ($data as $key => $value) {
+            $parameter = $parameters->get(static::normalizeKey((string) $key), $key);
+
+            // An exact match wins over a normalized one.
+            if ($parameter !== $key && array_key_exists($parameter, $data)) {
+                continue;
             }
+
+            $mapped[$parameter] = $value;
         }
 
-        return new $className(
-            ...array_intersect_key($data, $arguments->flip()->toArray())
-        );
+        return $mapped;
+    }
+
+    protected static function getParameterNames(): array
+    {
+        $constructor = (new ReflectionClass(static::class))->getConstructor();
+
+        return $constructor
+            ? array_map(fn ($parameter) => $parameter->getName(), $constructor->getParameters())
+            : [];
+    }
+
+    protected static function normalizeKey(string $key): string
+    {
+        return strtolower(str_replace('_', '', $key));
     }
 }

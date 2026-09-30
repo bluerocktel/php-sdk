@@ -25,6 +25,9 @@ abstract class Entity implements EntityContract, WithResponse
 
     public static function fromArray(array $data): static
     {
+        // Map keys first so casts declared on parameter names also apply to snake_case payloads.
+        $data = static::mapKeysToParameters($data);
+
         static::castArrayValues($data, static::getCastAttributes());
 
         return static::createFromArray($data);
